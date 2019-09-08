@@ -1,4 +1,4 @@
-package com.pe.delicias.apirest.response;
+package com.pe.delicias.apirest.response.customer;
 
 import com.pe.delicias.apirest.request.UserModel;
 
@@ -7,7 +7,6 @@ import java.util.Date;
 public class CustomerData extends UserModel {
     private boolean active;
     private String fechaRegistro;
-    private String _id;
 
     public CustomerData() {
         super();
@@ -29,11 +28,4 @@ public class CustomerData extends UserModel {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public String get_id() {
-        return _id;
-    }
-
-    public void set_id(String _id) {
-        this._id = _id;
-    }
 }
