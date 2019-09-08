@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home_item"
+        android:icon="@drawable/ic_home"
+        android:orderInCategory="100"
+        android:title="Home"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_item"
+        android:icon="@drawable/ic_cutlery"
+        android:orderInCategory="101"
+        android:title="Menús"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/order_item"
+        android:icon="@drawable/ic_order"
+        android:orderInCategory="102"
+        android:title="Ordenes"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/chef_item"
+        android:icon="@drawable/ic_chef"
+        android:orderInCategory="103"
+        android:title="Chef"
+        app:showAsAction="never" />
+</menu>

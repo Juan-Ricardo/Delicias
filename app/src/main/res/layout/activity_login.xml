@@ -39,11 +39,12 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese su usuario">
+                android:hint="Ingrese su email">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/username_text_input_edit_text"
+                    android:id="@+id/email_text_input_edit_text"
                     android:layout_width="match_parent"
+                    android:text="hola@gmail.com"
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
@@ -58,15 +59,27 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_text_input_edit_text"
                     android:layout_width="match_parent"
+                    android:inputType="textPassword"
+                    android:text="123456"
                     android:layout_height="wrap_content" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.button.MaterialButton
+                android:id="@+id/log_in_material_button"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="64dp"
                 android:layout_marginTop="24dp"
                 android:text="Iniciar Sesión"
+                android:textAllCaps="false"
+                app:cornerRadius="24dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/create_account_material_button"
+                android:layout_width="match_parent"
+                android:layout_height="64dp"
+                android:backgroundTint="@color/secondary_text"
+                android:text="Crear una cuenta"
                 android:textAllCaps="false"
                 app:cornerRadius="24dp" />
 
