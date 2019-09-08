@@ -4,6 +4,7 @@ public class UserModel {
     private String _id;
     private String token;
     private String imagen;
+    private String nombres;
     private String apellido_paterno;
     private String apellido_materno;
     private String email;
@@ -35,6 +36,14 @@ public class UserModel {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public String getNombres() {
+        return nombres;
+    }
+
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
     }
 
     public String getApellido_paterno() {

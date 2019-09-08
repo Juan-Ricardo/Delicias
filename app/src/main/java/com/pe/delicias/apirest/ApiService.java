@@ -1,14 +1,10 @@
 package com.pe.delicias.apirest;
 
-
-import com.pe.delicias.apirest.request.CustomerResquest;
 import com.pe.delicias.apirest.request.UserRequest;
+import com.pe.delicias.apirest.request.customer.CustomerResquest;
 import com.pe.delicias.apirest.response.UserResponse;
 import com.pe.delicias.apirest.response.category.CategoryResponse;
 import com.pe.delicias.apirest.response.customer.CustomerResponse;
-
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
