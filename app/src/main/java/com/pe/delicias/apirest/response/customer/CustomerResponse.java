@@ -1,4 +1,4 @@
-package com.pe.delicias.apirest.response;
+package com.pe.delicias.apirest.response.customer;
 
 import com.google.gson.annotations.SerializedName;
 import com.pe.delicias.apirest.request.UserModel;

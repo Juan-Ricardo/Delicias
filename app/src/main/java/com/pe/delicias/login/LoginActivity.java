@@ -15,7 +15,7 @@ import com.pe.delicias.R;
 import com.pe.delicias.account.CreateAccountActivity;
 import com.pe.delicias.apirest.ApiClient;
 import com.pe.delicias.apirest.ApiService;
-import com.pe.delicias.apirest.request.customer.CustomerResquest;
+import com.pe.delicias.apirest.request.CustomerResquest;
 import com.pe.delicias.apirest.response.customer.CustomerResponse;
 import com.pe.delicias.home.HomeActivity;
 import com.pe.delicias.utilities.Utilities;
