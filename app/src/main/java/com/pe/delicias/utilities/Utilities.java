@@ -10,6 +10,11 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 public class Utilities {
+
+    public static String ID_CUSTOMER="id_customer";
+    public static String TOKEN_CUSTOMER="token_customer";
+    public static String NAMES_CUSTOMER="names_customer";
+
     public static boolean emailIsValid(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;
         return pattern.matcher(email).matches();

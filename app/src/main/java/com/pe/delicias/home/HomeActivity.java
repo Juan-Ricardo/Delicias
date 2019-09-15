@@ -12,6 +12,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pe.delicias.R;
 import com.pe.delicias.chef.ChefFragment;
 import com.pe.delicias.category.CategoryFragment;
+import com.pe.delicias.order.OrderFragment;
 import com.pe.delicias.plate.PlateFragment;
 
 public class HomeActivity extends AppCompatActivity {
@@ -61,7 +62,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void goOrder() {
-
+        addFragment(new OrderFragment(), "OrderFragment");
     }
 
     private void goChef() {
@@ -75,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
                 .commit();
     }
 
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return super.onCreateOptionsMenu(menu);
@@ -88,5 +89,5 @@ public class HomeActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 }
