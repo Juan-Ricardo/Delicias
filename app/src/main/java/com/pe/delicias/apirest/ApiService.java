@@ -5,6 +5,7 @@ import com.pe.delicias.apirest.request.customer.CustomerResquest;
 import com.pe.delicias.apirest.response.UserResponse;
 import com.pe.delicias.apirest.response.category.CategoryResponse;
 import com.pe.delicias.apirest.response.customer.CustomerResponse;
+import com.pe.delicias.apirest.response.plate.PlateResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -24,4 +25,6 @@ public interface ApiService {
     @GET("/categorias")
     Call<CategoryResponse> getCategories();
 
+    @GET("/platos")
+    Call<PlateResponse> getPlates();
 }

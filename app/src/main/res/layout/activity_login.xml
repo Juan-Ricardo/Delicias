@@ -19,20 +19,28 @@
             android:padding="24dp">
 
             <TextView
+                android:id="@+id/version_app_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="48dp"
+                android:layout_marginBottom="24dp"
                 android:gravity="center"
                 android:text="Delicias v1.0.0"
                 android:textSize="18sp" />
 
+            <ImageView
+                android:layout_width="104dp"
+                android:layout_height="104dp"
+                android:layout_marginBottom="84dp"
+                android:src="@drawable/ic_imagotipo" />
+
             <TextView
+                android:id="@+id/title_log_in_text_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="24dp"
                 android:gravity="center"
                 android:text="Iniciar Sesión"
-                android:textSize="32sp"
+                android:textSize="44sp"
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -44,8 +52,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/email_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:text="hola@gmail.com"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="hola@gmail.com" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -59,9 +67,9 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_text_input_edit_text"
                     android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:inputType="textPassword"
-                    android:text="123456"
-                    android:layout_height="wrap_content" />
+                    android:text="123456" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -74,6 +82,38 @@
                 android:textAllCaps="false"
                 app:cornerRadius="24dp" />
 
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/dont_have_account"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="don't have an account?"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/sign_up_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toRightOf="@id/dont_have_account"
+                    android:background="@drawable/shape_sign_up"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="4dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="4dp"
+                    android:text="sign up"
+                    android:textColor="#303C42"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/create_account_material_button"
                 android:layout_width="match_parent"
@@ -81,6 +121,7 @@
                 android:backgroundTint="@color/secondary_text"
                 android:text="Crear una cuenta"
                 android:textAllCaps="false"
+                android:visibility="gone"
                 app:cornerRadius="24dp" />
 
         </LinearLayout>
