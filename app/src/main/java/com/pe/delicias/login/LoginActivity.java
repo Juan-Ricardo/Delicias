@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
@@ -26,10 +27,14 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private TextView versionAppTextView;
+    private TextView titleLogInTextView;
     private MaterialButton logInMaterialButton;
     private MaterialButton createAccountMaterialButton;
     private TextInputEditText emailTextInputEditText;
     private TextInputEditText passwordTextInputEditText;
+    private TextView dontHaveAccountTextView;
+    private TextView signUpTextView;
     private ProgressDialog progressDialog;
 
     @Override
@@ -41,10 +46,29 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void finds() {
+
+        versionAppTextView = findViewById(R.id.version_app_text_view);
+        versionAppTextView.setTypeface(Utilities.sansBold(this));
+
+        titleLogInTextView = findViewById(R.id.title_log_in_text_view);
+        titleLogInTextView.setTypeface(Utilities.sansBlack(this));
+
         logInMaterialButton = findViewById(R.id.log_in_material_button);
         createAccountMaterialButton = findViewById(R.id.create_account_material_button);
+        createAccountMaterialButton.setTypeface(Utilities.sansLight(this));
+
         emailTextInputEditText = findViewById(R.id.email_text_input_edit_text);
+        emailTextInputEditText.setTypeface(Utilities.sansLight(this));
+
         passwordTextInputEditText = findViewById(R.id.password_text_input_edit_text);
+        passwordTextInputEditText.setTypeface(Utilities.sansLight(this));
+
+        dontHaveAccountTextView = findViewById(R.id.dont_have_account);
+        dontHaveAccountTextView.setTypeface(Utilities.sansLight(this));
+
+        signUpTextView = findViewById(R.id.sign_up_text_view);
+        signUpTextView.setTypeface(Utilities.sansBold(this));
+
         progressDialog = new ProgressDialog(this);
     }
 
@@ -57,6 +81,14 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         createAccountMaterialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        signUpTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(LoginActivity.this, CreateAccountActivity.class);

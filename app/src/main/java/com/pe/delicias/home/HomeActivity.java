@@ -5,17 +5,18 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pe.delicias.R;
 import com.pe.delicias.chef.ChefFragment;
 import com.pe.delicias.category.CategoryFragment;
+import com.pe.delicias.plate.PlateFragment;
 
 public class HomeActivity extends AppCompatActivity {
 
     private BottomNavigationView menuBottomNavigationView;
-    private Fragment placeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void goHome() {
-
+        addFragment(new PlateFragment(), "PlateFragment");
     }
 
     private void goCategory() {
@@ -72,5 +73,20 @@ public class HomeActivity extends AppCompatActivity {
                 .beginTransaction()
                 .replace(R.id.content_frame_layout, fragment, tag)
                 .commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.search_item_menu) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

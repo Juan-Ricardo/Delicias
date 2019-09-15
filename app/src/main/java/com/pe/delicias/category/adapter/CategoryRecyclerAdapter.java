@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.pe.delicias.category.model.Category;
+import com.pe.delicias.utilities.Utilities;
 
 
 import java.util.List;
@@ -37,12 +38,17 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryViewHo
     @Override
     public void onBindViewHolder(@NonNull CategoryViewHolder holder, int position) {
         Category category = this.categories.get(position);
-        Glide.with(this.activity)
+        Glide.with(activity)
+                .load(category.getImage())
+                .into(holder.backgroundCategoryImageView);
+        Glide.with(activity)
                 .load(category.getImage())
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.menuImageView);
         holder.titleTextView.setText(category.getTitle());
-        //holder.descriptionTextView.setText(category.getDescription());
+        holder.titleTextView.setTypeface(Utilities.sansBlack(activity.getBaseContext()));
+        holder.descriptionTextView.setText(category.getDescription());
+        holder.descriptionTextView.setTypeface(Utilities.sansLight(activity.getBaseContext()));
     }
 
     @Override
