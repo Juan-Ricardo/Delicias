@@ -29,12 +29,12 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
                         switch (menuItem.getItemId()) {
-                            case R.id.home_item:
-                                goHome();
+                            case R.id.category_item:
+                                goCategory();
                                 return true;
 
                             case R.id.menu_item:
-                                goCategory();
+                                goPLate();
                                 return true;
 
                             case R.id.order_item:
@@ -48,16 +48,16 @@ public class HomeActivity extends AppCompatActivity {
                         return false;
                     }
                 });
-        menuBottomNavigationView.setSelectedItemId(R.id.menu_item);
+        menuBottomNavigationView.setSelectedItemId(R.id.category_item);
         addFragment(new CategoryFragment(), "CategoryFragment");
-    }
-
-    private void goHome() {
-        addFragment(new PlateFragment(), "PlateFragment");
     }
 
     private void goCategory() {
         addFragment(new CategoryFragment(), "CategoryFragment");
+    }
+
+    private void goPLate() {
+        addFragment(new PlateFragment(), "PlateFragment");
     }
 
     private void goOrder() {

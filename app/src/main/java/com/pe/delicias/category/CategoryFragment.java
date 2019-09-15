@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -112,9 +114,11 @@ public class CategoryFragment extends Fragment {
         Call<CategoryResponse> categoryResponse = ApiClient.getInstance(getContext())
                 .createService(ApiService.class)
                 .getCategories();
+
         categoryResponse.enqueue(new Callback<CategoryResponse>() {
             @Override
             public void onResponse(Call<CategoryResponse> call, Response<CategoryResponse> response) {
+
                 List<CategoryData> row = response.body().getData();
                 if (response.isSuccessful()) {
                     for (int i = 0; i < row.size(); i++) {

@@ -21,7 +21,7 @@
 
     <style name="AppTheme.Toolbar">
 
-        <item name="android:textColorPrimary">@color/color_text</item>
+        <item name="android:textColorPrimary">@color/color_text_title</item>
 
         <item name="colorAccent">@color/accent</item>
         <!--el atributo android:colorAccent solo es compatible con API 21 y superior.-->
@@ -30,10 +30,10 @@
         <item name="android:backgroundTint">@color/white</item>
 
         <!--color icon tres puntos-->
-        <item name="colorControlNormal">@color/color_text</item>
+        <item name="colorControlNormal">@color/color_text_title</item>
 
         <!--color de texto del popup-->
-        <item name="android:textColor">@color/color_text</item>
+        <item name="android:textColor">@color/color_text_title</item>
     </style>
 
     <style name="AppTheme.FullScreen">
