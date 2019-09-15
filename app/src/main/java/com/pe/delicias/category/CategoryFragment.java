@@ -57,7 +57,7 @@ public class CategoryFragment extends Fragment {
     }
 
     private void finds(View view) {
-        setupToolbar(view, "Categorías", "Delicias v1.0.0", false);
+        setupToolbar(view, "Categorías", "", false);
         this.menuRecyclerView = view.findViewById(R.id.menu_recycler_view);
         this.categoryNestedScrollView = view.findViewById(R.id.category_nested_scroll_view);
         this.categoryNestedScrollView.setOnScrollChangeListener(onScrollChangeListener);
