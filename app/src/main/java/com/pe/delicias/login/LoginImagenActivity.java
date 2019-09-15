@@ -19,8 +19,10 @@ import com.pe.delicias.apirest.ApiService;
 import com.pe.delicias.apirest.request.customer.CustomerResquest;
 import com.pe.delicias.apirest.response.customer.CustomerResponse;
 import com.pe.delicias.home.HomeActivity;
+import com.pe.delicias.utilities.PreferencesSingleton;
 import com.pe.delicias.utilities.Utilities;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -137,6 +139,7 @@ public class LoginImagenActivity extends AppCompatActivity {
                 Log.v("response", "" + response.body().getData().getEmail());
                 Log.v("response", "" + response.body().getData().getToken());*/
                 if (response.isSuccessful()) {
+                    savePreferences(response);
                     hideLoading();
                     goHome();
                 } else {
@@ -151,6 +154,16 @@ public class LoginImagenActivity extends AppCompatActivity {
                 Log.v("response", "onFailure: " + t.getMessage());
             }
         });
+    }
+
+    private void savePreferences(Response<CustomerResponse> response) {
+        String id = response.body().getData().get_id();
+        String token = response.body().getData().getToken();
+        String names = response.body().getData().getNombres();
+
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.ID_CUSTOMER,id);
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.TOKEN_CUSTOMER,token);
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.NAMES_CUSTOMER,names);
     }
 
     private void showLoading() {
