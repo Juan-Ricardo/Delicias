@@ -14,6 +14,7 @@ public class PlateViewHolder extends RecyclerView.ViewHolder {
     public TextView nameTextView;
     public TextView descriptionTextView;
     public TextView priceTextView;
+    public ImageView addOrderImageView;
 
     public PlateViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -21,5 +22,6 @@ public class PlateViewHolder extends RecyclerView.ViewHolder {
         nameTextView = itemView.findViewById(R.id.name_text_view);
         descriptionTextView = itemView.findViewById(R.id.description_text_view);
         priceTextView = itemView.findViewById(R.id.price_text_view);
+        addOrderImageView = itemView.findViewById(R.id.add_order_image_view);
     }
 }

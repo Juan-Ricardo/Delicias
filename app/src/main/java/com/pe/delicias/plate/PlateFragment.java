@@ -10,11 +10,16 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.pe.delicias.R;
 import com.pe.delicias.apirest.ApiClient;
 import com.pe.delicias.apirest.ApiService;
@@ -41,6 +46,9 @@ import retrofit2.Response;
 public class PlateFragment extends Fragment {
 
     //Rainbow Brackets
+
+    @BindView(R.id.material_search_view)
+    public MaterialSearchView materialSearchView;
 
     @BindView(R.id.toolbar)
     public Toolbar toolbar;
@@ -74,9 +82,28 @@ public class PlateFragment extends Fragment {
     }
 
     private void finds() {
+        setHasOptionsMenu(true);
         menuBottomNavigationView = getActivity().findViewById(R.id.menu_bottom_navigation);
         setupToolbar("Platos", "", false);
         plates = new LinkedList<>();
+        events();
+    }
+
+    private void events() {
+        materialSearchView.setHint("Buscar...");
+        materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                if (adapter != null)
+                    adapter.getFilter().filter(query);
+                return true;
+            }
+        });
     }
 
     private void setupToolbar(String title, String subTitle, boolean arrow) {
@@ -132,5 +159,20 @@ public class PlateFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.menu_main, menu);
+        super.onCreateOptionsMenu(menu, inflater);
+
+        MenuItem item = menu.findItem(R.id.search_item_menu);
+        materialSearchView.setMenuItem(item);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        return super.onOptionsItemSelected(item);
     }
 }
