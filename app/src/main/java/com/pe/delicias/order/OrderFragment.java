@@ -2,13 +2,16 @@ package com.pe.delicias.order;
 
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -116,51 +119,9 @@ public class OrderFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Agregar plato a la órden", Toast.LENGTH_LONG).show();
                 }
-                showNotification();
+                //Utilities.createNotification(getContext());
             }
         });
-    }
-
-    private void abc(){
-        // This is the Notification Channel ID. More about this in the next section
-        String NOTIFICATION_CHANNEL_ID = "default_channel";
-        int NOTIFICATION_ID = 1001;
-        //Notification Channel ID passed as a parameter here will be ignored for all the Android versions below 8.0
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID);
-        builder.setContentTitle("This is heading");
-        builder.setContentText("This is description");
-        builder.setSmallIcon(R.drawable.chef_notification);
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
-        //builder.setSmallIcon(R.drawable.icon);
-        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon));
-        Notification notification = builder.build();
-
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getContext());
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
-
-
-    }
-    private void showNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext());
-        builder.setSmallIcon(android.R.drawable.ic_dialog_alert);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com/"));
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-        builder.setContentIntent(pendingIntent);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.chef_notification));
-        builder.setContentTitle("Notifications Title");
-        builder.setContentText("Your notification content here.");
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-        //builder.setSubText("Tap to view the website.");
-        NotificationManager notificationManager = (NotificationManager) getActivity()
-                .getSystemService(Context.NOTIFICATION_SERVICE);
-
-        // Will display the notification in the notification bar
-        notificationManager.notify(1, builder.build());
     }
 
     private void setupToolbar(View view, String title, String subTitle, boolean arrow) {
