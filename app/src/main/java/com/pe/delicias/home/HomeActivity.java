@@ -5,11 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pe.delicias.R;
+import com.pe.delicias.apirest.response.plate.PlateResponse;
 import com.pe.delicias.chef.ChefFragment;
 import com.pe.delicias.category.CategoryFragment;
 import com.pe.delicias.order.OrderFragment;
@@ -73,6 +73,7 @@ public class HomeActivity extends AppCompatActivity {
         getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.content_frame_layout, fragment, tag)
+                .addToBackStack(null)
                 .commit();
     }
 

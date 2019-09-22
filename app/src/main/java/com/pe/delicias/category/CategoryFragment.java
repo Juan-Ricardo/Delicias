@@ -1,11 +1,10 @@
 package com.pe.delicias.category;
 
-import android.graphics.drawable.Drawable;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.ContextCompat;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -14,10 +13,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.pe.delicias.R;
@@ -25,8 +23,11 @@ import com.pe.delicias.apirest.ApiClient;
 import com.pe.delicias.apirest.ApiService;
 import com.pe.delicias.apirest.response.category.CategoryData;
 import com.pe.delicias.apirest.response.category.CategoryResponse;
+import com.pe.delicias.apirest.response.plate.PlateResponse;
 import com.pe.delicias.category.adapter.CategoryRecyclerAdapter;
 import com.pe.delicias.category.model.Category;
+import com.pe.delicias.home.PlateByCategoryListener;
+import com.pe.delicias.plate.PlateFragment;
 import com.pe.delicias.utilities.Utilities;
 
 import java.util.LinkedList;
@@ -36,7 +37,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CategoryFragment extends Fragment {
+public class CategoryFragment extends Fragment implements PlateByCategoryListener{
 
     private Toolbar toolbar;
     private RecyclerView menuRecyclerView;
@@ -105,7 +106,7 @@ public class CategoryFragment extends Fragment {
         loadCategories();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         menuRecyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new CategoryRecyclerAdapter(categories, R.layout.category_card_view, getActivity());
+        adapter = new CategoryRecyclerAdapter(categories, R.layout.category_card_view, getActivity(),this);
         menuRecyclerView.setAdapter(adapter);
         menuRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
@@ -143,5 +144,30 @@ public class CategoryFragment extends Fragment {
                 Log.v("menu: ", "onFailure: " + t.getMessage());
             }
         });
+    }
+
+    private void addFragment(Fragment fragment, String tag) {
+        getActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content_frame_layout, fragment, tag)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void onError(String error) {
+
+    }
+
+    @Override
+    public void onSuccess(PlateResponse plateResponse) {
+        if(plateResponse.getData().size()==0){
+            Toast.makeText(getContext(),"No contamos con estos platos :)",Toast.LENGTH_SHORT).show();
+        }else{
+            PlateFragment plateFragment =new PlateFragment();
+            plateFragment.setPlates(plateResponse);
+            plateFragment.setShowPlateByCategory(true);
+            addFragment(plateFragment,"PlateFragment");
+        }
     }
 }

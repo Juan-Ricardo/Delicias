@@ -3,12 +3,17 @@ package com.pe.delicias.account;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
+import android.view.KeyEvent;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 import com.pe.delicias.R;
 import com.pe.delicias.apirest.ApiClient;
 import com.pe.delicias.apirest.ApiService;
@@ -26,6 +31,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class CreateAccountActivity extends AppCompatActivity {
+
+    @BindView(R.id.name_text_input_layout)
+    TextInputLayout nameTextInputLayout;
 
     @BindView(R.id.name_text_input_edit_text)
     TextInputEditText nameTextInputEditText;
@@ -53,6 +61,32 @@ public class CreateAccountActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_account);
         ButterKnife.bind(this);
+        events();
+    }
+
+    private void events() {
+        nameTextInputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                Log.v("createaccount: ", "beforeTextChanged: " + s);
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.v("createaccount: ", "onTextChanged: " + s);
+                if (s.length() >= 3) {
+                    nameTextInputLayout.setErrorEnabled(false);
+                } else {
+                    nameTextInputLayout.setErrorEnabled(true);
+                    nameTextInputLayout.setError("Por favor ingrese su nombre");
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                Log.v("createaccount: ", "afterTextChanged: " + s);
+            }
+        });
     }
 
     private void validate() {
@@ -64,8 +98,12 @@ public class CreateAccountActivity extends AppCompatActivity {
         String passwordConfirm = passwordConfirmTextInputEditText.getText().toString();
 
         if (name.isEmpty()) {
-            Toast.makeText(this, "Por favor ingrese su nombre", Toast.LENGTH_SHORT).show();
+            nameTextInputLayout.setError("Por favor ingrese su nombre");
+            nameTextInputLayout.setErrorEnabled(true);
+            //Toast.makeText(this, "Por favor ingrese su nombre", Toast.LENGTH_SHORT).show();
             return;
+        } else {
+            nameTextInputLayout.setErrorEnabled(false);
         }
 
         if (paternal.isEmpty()) {

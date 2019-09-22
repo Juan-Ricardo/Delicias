@@ -26,8 +26,8 @@
 
             <ImageView
                 android:id="@+id/plate_image_view"
-                android:layout_width="74dp"
-                android:layout_height="74dp"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
                 android:layout_gravity="center"
                 android:src="@drawable/salads" />
 
@@ -74,7 +74,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Arroz con Pollo"
-                    android:textColor="#090a14"
+                    android:textColor="#14172E"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -98,8 +98,11 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
                         android:text="S/. 23.99"
-                        android:textColor="#f8cc05"
-                        android:textSize="24sp"
+                        android:background="@drawable/shape_sign_up"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
+                        android:textColor="#1A225C"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
 
                     <ImageView

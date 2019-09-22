@@ -1,6 +1,7 @@
 package com.pe.delicias.plate;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -67,6 +68,8 @@ public class PlateFragment extends Fragment {
 
     private boolean isNavigationHide = false;
 
+    private boolean showPlateByCategory = false;
+
     public PlateFragment() {
         // Required empty public constructor
     }
@@ -85,7 +88,6 @@ public class PlateFragment extends Fragment {
         setHasOptionsMenu(true);
         menuBottomNavigationView = getActivity().findViewById(R.id.menu_bottom_navigation);
         setupToolbar("Platos", "", false);
-        plates = new LinkedList<>();
         events();
     }
 
@@ -116,10 +118,24 @@ public class PlateFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setPlateRecyclerView();
+        setupShowPlate();
+    }
+
+    private void setupShowPlate() {
+        if (showPlateByCategory)
+            showPlateByCategoryRecyclerView();
+        else
+            setPlateRecyclerView();
+    }
+
+    private void showPlateByCategoryRecyclerView() {
+        plateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new PlateRecyclerAdapter(plates, R.layout.plate_card_view, getActivity());
+        plateRecyclerView.setAdapter(adapter);
     }
 
     private void setPlateRecyclerView() {
+        plates = new LinkedList<>();
         plateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PlateRecyclerAdapter(plates, R.layout.plate_card_view, getActivity());
         plateRecyclerView.setAdapter(adapter);
@@ -144,7 +160,7 @@ public class PlateFragment extends Fragment {
                         plate.setDescription(row.getCategoria_id().getNombre() + " " +
                                 row.getCategoria_id().getDescripcion());
                         plate.setImage(row.getImagen());
-                        plate.setPrice(row.getPrecio());
+                        plate.setPrice(Double.parseDouble(row.getPrecio()));
 
                         plates.add(plate);
                     }
@@ -174,5 +190,26 @@ public class PlateFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setPlates(PlateResponse response) {
+        plates = new LinkedList<>();
+        List<PlateDataResponse> rows = response.getData();
+        for (PlateDataResponse row : rows) {
+
+            Plate plate = new Plate();
+            plate.setId(row.get_id());
+            plate.setName(row.getNombre());
+            plate.setDescription(row.getCategoria_id().getNombre() + " " +
+                    row.getCategoria_id().getDescripcion());
+            plate.setImage(row.getImagen());
+            plate.setPrice(Double.parseDouble(row.getPrecio()));
+
+            plates.add(plate);
+        }
+    }
+
+    public void setShowPlateByCategory(boolean showPlateByCategory) {
+        this.showPlateByCategory = showPlateByCategory;
     }
 }
