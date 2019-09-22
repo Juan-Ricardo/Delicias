@@ -1,10 +1,20 @@
 package com.pe.delicias.order;
 
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +30,7 @@ import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.pe.delicias.R;
+import com.pe.delicias.home.HomeActivity;
 import com.pe.delicias.order.adapter.OrderAdapterRecycler;
 import com.pe.delicias.order.model.Order;
 import com.pe.delicias.order.model.OrderModel;
@@ -73,38 +84,81 @@ public class OrderFragment extends Fragment {
             public void onClick(View v) {
                 //Toast.makeText(getContext(), "Confirmar Pedido", Toast.LENGTH_LONG).show();
                 List<Order> orders = OrderSingleton.getInstance(getContext()).getOrders();
+                if (orders.size() != 0) {
+                    String idClient = PreferencesSingleton.getInstance(getContext())
+                            .read(Utilities.ID_CUSTOMER, "default");
 
-                String idClient = PreferencesSingleton.getInstance(getContext())
-                        .read(Utilities.ID_CUSTOMER, "default");
-
-                JSONObject jsonObject = SocketUtils.getJsonObject(idClient, orders);
-                Log.v("confirmarpedido: ", "" + jsonObject);
-                //Log.v("confirmarpedido: ", "antes: " + Thread.currentThread().getName());
-                SocketManager.getInstance(getActivity()).emit(SocketUtils.EMIT_ORDER, jsonObject, new Ack() {
-                    @Override
-                    public void call(Object... args) {
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Object arg = args[0];
-                                Gson gson = new Gson();
-                                //Log.v("confirmarpedido: ", "despues: " + Thread.currentThread().getName());
-                                OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
-                                if (orderModel.isSuccess()) {
-                                    Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
-                                    OrderSingleton.getInstance(getContext()).removeAllOrders();
-                                    setOrderRecyclerView();
-                                    priceTotalTextView.setText("Precio Total S/. 0.0 ");
-                                } else {
-                                    Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                    JSONObject jsonObject = SocketUtils.getJsonObject(idClient, orders);
+                    Log.v("confirmarpedido: ", "" + jsonObject);
+                    //Log.v("confirmarpedido: ", "antes: " + Thread.currentThread().getName());
+                    SocketManager.getInstance(getActivity()).emit(SocketUtils.EMIT_ORDER, jsonObject, new Ack() {
+                        @Override
+                        public void call(Object... args) {
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Object arg = args[0];
+                                    Gson gson = new Gson();
+                                    //Log.v("confirmarpedido: ", "despues: " + Thread.currentThread().getName());
+                                    OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
+                                    if (orderModel.isSuccess()) {
+                                        Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
+                                        OrderSingleton.getInstance(getContext()).removeAllOrders();
+                                        setOrderRecyclerView();
+                                        priceTotalTextView.setText("Precio Total S/. 0.0 ");
+                                    } else {
+                                        Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                                    }
                                 }
-                            }
-                        });
-                    }
-                });
-
+                            });
+                        }
+                    });
+                } else {
+                    Toast.makeText(getContext(), "Agregar plato a la órden", Toast.LENGTH_LONG).show();
+                }
+                showNotification();
             }
         });
+    }
+
+    private void abc(){
+        // This is the Notification Channel ID. More about this in the next section
+        String NOTIFICATION_CHANNEL_ID = "channel_id";
+        int NOTIFICATION_ID = 1001;
+        //Notification Channel ID passed as a parameter here will be ignored for all the Android versions below 8.0
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID);
+        builder.setContentTitle("This is heading");
+        builder.setContentText("This is description");
+        builder.setSmallIcon(R.drawable.chef_notification);
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
+        //builder.setSmallIcon(R.drawable.icon);
+        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon));
+        Notification notification = builder.build();
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getContext());
+        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
+
+
+    }
+    private void showNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext());
+        builder.setSmallIcon(android.R.drawable.ic_dialog_alert);
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com/"));
+        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
+        builder.setContentIntent(pendingIntent);
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        builder.setContentTitle("Notifications Title");
+        builder.setContentText("Your notification content here.");
+        builder.setSubText("Tap to view the website.");
+
+        NotificationManager notificationManager = (NotificationManager) getActivity()
+                .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        // Will display the notification in the notification bar
+        notificationManager.notify(1, builder.build());
     }
 
     private void setupToolbar(View view, String title, String subTitle, boolean arrow) {
