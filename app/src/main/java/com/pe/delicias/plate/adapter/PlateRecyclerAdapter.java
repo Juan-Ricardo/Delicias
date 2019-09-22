@@ -90,15 +90,17 @@ public class PlateRecyclerAdapter extends RecyclerView.Adapter<PlateViewHolder> 
                 order.setNameFull(names);
 
                 Plate currentPlate=new Plate();
+                currentPlate.setId(plate.getId());
                 currentPlate.setName(plate.getName());
+                currentPlate.setPrice(plate.getPrice());
+                currentPlate.setAmount(Integer.parseInt("1"));
                 currentPlate.setDescription(plate.getDescription());
 
                 List<Plate> currentPlates=new LinkedList<>();
                 currentPlates.add(currentPlate);
 
                 order.setPlates(currentPlates);
-                order.setTotal(75.77);
-
+                order.setPlate(currentPlate);
                 OrderSingleton.getInstance(activity.getBaseContext()).addOrder(order);
             }
         });

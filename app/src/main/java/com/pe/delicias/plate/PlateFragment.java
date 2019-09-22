@@ -160,7 +160,7 @@ public class PlateFragment extends Fragment {
                         plate.setDescription(row.getCategoria_id().getNombre() + " " +
                                 row.getCategoria_id().getDescripcion());
                         plate.setImage(row.getImagen());
-                        plate.setPrice(row.getPrecio());
+                        plate.setPrice(Double.parseDouble(row.getPrecio()));
 
                         plates.add(plate);
                     }
@@ -203,7 +203,7 @@ public class PlateFragment extends Fragment {
             plate.setDescription(row.getCategoria_id().getNombre() + " " +
                     row.getCategoria_id().getDescripcion());
             plate.setImage(row.getImagen());
-            plate.setPrice(row.getPrecio());
+            plate.setPrice(Double.parseDouble(row.getPrecio()));
 
             plates.add(plate);
         }

@@ -1,11 +1,11 @@
 package com.pe.delicias.apirest;
 
-import com.pe.delicias.apirest.request.UserRequest;
 import com.pe.delicias.apirest.request.customer.CustomerResquest;
-import com.pe.delicias.apirest.response.UserResponse;
+import com.pe.delicias.apirest.request.user.UserRequest;
 import com.pe.delicias.apirest.response.category.CategoryResponse;
 import com.pe.delicias.apirest.response.customer.CustomerResponse;
 import com.pe.delicias.apirest.response.plate.PlateResponse;
+import com.pe.delicias.apirest.response.user.UserResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

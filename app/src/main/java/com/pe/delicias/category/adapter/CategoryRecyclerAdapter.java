@@ -71,9 +71,11 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryViewHo
     }
 
     private void loadPlates(Category category) {
+
         Call<PlateResponse> plateByCategory = ApiClient.getInstance(activity.getBaseContext())
                 .createService(ApiService.class)
                 .getPlateByCategory(category.getId());
+
         plateByCategory.enqueue(new Callback<PlateResponse>() {
             @Override
             public void onResponse(Call<PlateResponse> call, Response<PlateResponse> response) {
@@ -83,7 +85,11 @@ public class CategoryRecyclerAdapter extends RecyclerView.Adapter<CategoryViewHo
                     Log.v("plateByCategory: ", "" + row.getNombre());
                     Log.v("plateByCategory: ", "" + row.getDescripcion());*/
                 }
-                plateByCategoryListener.onSuccess(plateResponse);
+                if(response.isSuccessful()){
+                    plateByCategoryListener.onSuccess(plateResponse);
+                }else{
+                    plateByCategoryListener.onError("Error");
+                }
             }
 
             @Override

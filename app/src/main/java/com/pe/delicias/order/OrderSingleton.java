@@ -1,6 +1,7 @@
 package com.pe.delicias.order;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.pe.delicias.order.model.Order;
 
@@ -10,13 +11,13 @@ import java.util.List;
 public class OrderSingleton {
 
     private List<Order> orders;
-    private double priceTotal;
+    private double priceTotal = 0;
     private static OrderSingleton INSTANCE;
     private Context context;
 
     public OrderSingleton(Context context) {
         this.context = context;
-        this.orders=new LinkedList<>();
+        this.orders = new LinkedList<>();
     }
 
     public static OrderSingleton getInstance(Context context) {
@@ -27,7 +28,8 @@ public class OrderSingleton {
     }
 
     public void addOrder(Order order) {
-        this.priceTotal=priceTotal+order.getTotal();
+        this.priceTotal = priceTotal + order.getPlate().getPrice();
+        Log.v("priceTotal: ",""+this.priceTotal);
         this.orders.add(order);
     }
 
