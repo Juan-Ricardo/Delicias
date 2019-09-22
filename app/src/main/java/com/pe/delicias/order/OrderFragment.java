@@ -123,7 +123,7 @@ public class OrderFragment extends Fragment {
 
     private void abc(){
         // This is the Notification Channel ID. More about this in the next section
-        String NOTIFICATION_CHANNEL_ID = "channel_id";
+        String NOTIFICATION_CHANNEL_ID = "default_channel";
         int NOTIFICATION_ID = 1001;
         //Notification Channel ID passed as a parameter here will be ignored for all the Android versions below 8.0
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID);
@@ -149,11 +149,13 @@ public class OrderFragment extends Fragment {
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com/"));
         PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
         builder.setContentIntent(pendingIntent);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.chef_notification));
         builder.setContentTitle("Notifications Title");
         builder.setContentText("Your notification content here.");
-        builder.setSubText("Tap to view the website.");
-
+        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+        //builder.setSubText("Tap to view the website.");
         NotificationManager notificationManager = (NotificationManager) getActivity()
                 .getSystemService(Context.NOTIFICATION_SERVICE);
 
