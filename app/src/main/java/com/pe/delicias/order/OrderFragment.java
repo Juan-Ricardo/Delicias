@@ -18,9 +18,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.gson.Gson;
 import com.pe.delicias.R;
 import com.pe.delicias.order.adapter.OrderAdapterRecycler;
 import com.pe.delicias.order.model.Order;
+import com.pe.delicias.order.model.OrderModel;
 import com.pe.delicias.socket.SocketManager;
 import com.pe.delicias.socket.SocketUtils;
 import com.pe.delicias.utilities.PreferencesSingleton;
@@ -77,12 +79,27 @@ public class OrderFragment extends Fragment {
 
                 JSONObject jsonObject = SocketUtils.getJsonObject(idClient, orders);
                 Log.v("confirmarpedido: ", "" + jsonObject);
-
+                //Log.v("confirmarpedido: ", "antes: " + Thread.currentThread().getName());
                 SocketManager.getInstance(getActivity()).emit(SocketUtils.EMIT_ORDER, jsonObject, new Ack() {
                     @Override
                     public void call(Object... args) {
-                        Object arg = args[0];
-                        Log.v("confirmarpedido: ", "" + arg);
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Object arg = args[0];
+                                Gson gson = new Gson();
+                                //Log.v("confirmarpedido: ", "despues: " + Thread.currentThread().getName());
+                                OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
+                                if (orderModel.isSuccess()) {
+                                    Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
+                                    OrderSingleton.getInstance(getContext()).removeAllOrders();
+                                    setOrderRecyclerView();
+                                    priceTotalTextView.setText("Precio Total S/. 0.0 ");
+                                } else {
+                                    Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        });
                     }
                 });
 

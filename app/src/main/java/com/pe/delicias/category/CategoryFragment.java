@@ -71,12 +71,12 @@ public class CategoryFragment extends Fragment implements PlateByCategoryListene
     NestedScrollView.OnScrollChangeListener onScrollChangeListener = new NestedScrollView.OnScrollChangeListener() {
         @Override
         public void onScrollChange(NestedScrollView v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-            if (scrollY < oldScrollY) { // up
+            /*if (scrollY < oldScrollY) { // up
                 animateNavigation(false);
             }
             if (scrollY > oldScrollY) { // down
                 animateNavigation(true);
-            }
+            }*/
         }
     };
 
