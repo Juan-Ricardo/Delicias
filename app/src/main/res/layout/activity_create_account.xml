@@ -36,6 +36,7 @@
                 android:textStyle="bold" />
 
             <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/name_text_input_layout"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -58,8 +59,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/paternal_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:inputType="text"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -72,8 +73,8 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/maternal_text_input_edit_text"
                     android:layout_width="match_parent"
-                    android:inputType="text"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:inputType="text" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,7 +82,6 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:hint="Ingrese su email">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -96,8 +96,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Ingrese su password">
+                android:hint="Ingrese su password"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_text_input_edit_text"
@@ -111,8 +111,8 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:hint="Confirme su password">
+                android:hint="Confirme su password"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/password_confirm_text_input_edit_text"
