@@ -75,35 +75,30 @@ public class PlateRecyclerAdapter extends RecyclerView.Adapter<PlateViewHolder> 
         holder.addOrderImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(activity.getBaseContext(), "" + plate.getName(),
-                        Toast.LENGTH_SHORT).show();
-
-                Order order=new Order();
-                order.setId(UUID.randomUUID().toString());
-                order.setDateRegister(new Date().toString());
-
-                String id = PreferencesSingleton.getInstance(activity.getBaseContext()).read(Utilities.ID_CUSTOMER,"default");
-                String token = PreferencesSingleton.getInstance(activity.getBaseContext()).read(Utilities.TOKEN_CUSTOMER, "default");
-                String names = PreferencesSingleton.getInstance(activity.getBaseContext()).read(Utilities.NAMES_CUSTOMER,"default");
-
-                order.setIdClient(id);
-                order.setNameFull(names);
-
-                Plate currentPlate=new Plate();
-                currentPlate.setId(plate.getId());
-                currentPlate.setName(plate.getName());
-                currentPlate.setPrice(plate.getPrice());
-                currentPlate.setAmount(Integer.parseInt("1"));
-                currentPlate.setDescription(plate.getDescription());
-
-                List<Plate> currentPlates=new LinkedList<>();
-                currentPlates.add(currentPlate);
-
-                order.setPlates(currentPlates);
-                order.setPlate(currentPlate);
-                OrderSingleton.getInstance(activity.getBaseContext()).addOrder(order);
+                addOrder(plate);
             }
         });
+
+        holder.addOrderMaterialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addOrder(plate);
+            }
+        });
+    }
+
+    private void addOrder(Plate plate) {
+        Toast.makeText(activity.getBaseContext(), "" + plate.getName(),
+                Toast.LENGTH_SHORT).show();
+
+        Plate currentPlate = new Plate();
+        currentPlate.setId(plate.getId());
+        currentPlate.setName(plate.getName());
+        currentPlate.setPrice(plate.getPrice());
+        currentPlate.setAmount(Integer.parseInt("1"));
+        currentPlate.setDescription(plate.getDescription());
+
+        OrderSingleton.getInstance(activity.getBaseContext()).addPlate(currentPlate);
     }
 
     @Override

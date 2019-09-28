@@ -86,12 +86,12 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getContext(), "Confirmar Pedido", Toast.LENGTH_LONG).show();
-                List<Order> orders = OrderSingleton.getInstance(getContext()).getOrders();
-                if (orders.size() != 0) {
+                Order order = OrderSingleton.getInstance(getContext()).getOrder();
+                if (order.getPlates().size() != 0) {
                     String idClient = PreferencesSingleton.getInstance(getContext())
                             .read(Utilities.ID_CUSTOMER, "default");
 
-                    JSONObject jsonObject = SocketUtils.getJsonObject(idClient, orders);
+                    JSONObject jsonObject = SocketUtils.getJsonObject(idClient, order);
                     Log.v("confirmarpedido: ", "" + jsonObject);
                     //Log.v("confirmarpedido: ", "antes: " + Thread.currentThread().getName());
                     SocketManager.getInstance(getActivity()).emit(SocketUtils.EMIT_ORDER, jsonObject, new Ack() {
@@ -106,9 +106,10 @@ public class OrderFragment extends Fragment {
                                     OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
                                     if (orderModel.isSuccess()) {
                                         Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
-                                        OrderSingleton.getInstance(getContext()).removeAllOrders();
+                                        OrderSingleton.getInstance(getContext()).removeOrder();
                                         setOrderRecyclerView();
                                         priceTotalTextView.setText("Precio Total S/. 0.0 ");
+                                        OrderSingleton.getInstance(getContext()).setPriceTotal(0.0);
                                     } else {
                                         Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
                                     }
@@ -145,10 +146,10 @@ public class OrderFragment extends Fragment {
     }
 
     private void setOrderRecyclerView() {
-        List<Order> orders = OrderSingleton.getInstance(getContext()).getOrders();
+        Order order = OrderSingleton.getInstance(getContext()).getOrder();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         orderRecyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new OrderAdapterRecycler(orders, R.layout.order_card_view, getActivity());
+        adapter = new OrderAdapterRecycler(order.getPlates(), order.getNameFull(), R.layout.order_card_view, getActivity());
         orderRecyclerView.setAdapter(adapter);
         orderRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
