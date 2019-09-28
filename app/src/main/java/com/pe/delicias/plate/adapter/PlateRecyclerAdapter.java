@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class PlateRecyclerAdapter extends RecyclerView.Adapter<PlateViewHolder> implements Filterable {
@@ -75,28 +77,43 @@ public class PlateRecyclerAdapter extends RecyclerView.Adapter<PlateViewHolder> 
         holder.addOrderImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOrder(plate);
+                addOrder(plate, holder);
             }
         });
 
         holder.addOrderMaterialButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addOrder(plate);
+                addOrder(plate, holder);
             }
         });
     }
 
-    private void addOrder(Plate plate) {
-        Toast.makeText(activity.getBaseContext(), "" + plate.getName(),
-                Toast.LENGTH_SHORT).show();
+    private void addOrder(Plate plate, @NonNull PlateViewHolder holder) {
+        holder.successLottieAnimationView.setVisibility(View.VISIBLE);
+        holder.addOrderMaterialButton.setVisibility(View.GONE);
+        addPlateOrder(plate);
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(() -> {
+                    holder.successLottieAnimationView.setVisibility(View.GONE);
+                    holder.addOrderMaterialButton.setVisibility(View.VISIBLE);
+                });
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 1500);
+    }
 
+    private void addPlateOrder(Plate plate) {
         Plate currentPlate = new Plate();
         currentPlate.setId(plate.getId());
         currentPlate.setName(plate.getName());
         currentPlate.setPrice(plate.getPrice());
         currentPlate.setAmount(Integer.parseInt("1"));
         currentPlate.setDescription(plate.getDescription());
+        currentPlate.setUnitPrice(plate.getUnitPrice());
 
         OrderSingleton.getInstance(activity.getBaseContext()).addPlate(currentPlate);
     }

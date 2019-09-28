@@ -1,39 +1,29 @@
 package com.pe.delicias.order;
 
 
-import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.pe.delicias.R;
-import com.pe.delicias.home.HomeActivity;
+import com.pe.delicias.category.model.OrderState;
 import com.pe.delicias.order.adapter.OrderAdapterRecycler;
 import com.pe.delicias.order.model.Order;
 import com.pe.delicias.order.model.OrderModel;
@@ -44,7 +34,8 @@ import com.pe.delicias.utilities.Utilities;
 
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.socket.client.Ack;
 
@@ -53,12 +44,17 @@ import io.socket.client.Ack;
  */
 public class OrderFragment extends Fragment {
 
-
+    private LinearLayout messageLinearLayout;
+    private NestedScrollView orderNestedScrollView;
     private Toolbar toolbar;
     private TextView priceTotalTextView;
     private RecyclerView orderRecyclerView;
     private OrderAdapterRecycler adapter;
     private MaterialButton confirmMaterialButton;
+    private MaterialButton deleteMaterialButton;
+    private LottieAnimationView successLottieAnimationView;
+    private ImageView deliciasImageView;
+    private TextView messageTextView;
 
     public OrderFragment() {
         // Required empty public constructor
@@ -78,7 +74,9 @@ public class OrderFragment extends Fragment {
     }
 
     private void finds(View view) {
-        setupToolbar(view, "Órdenes", "", false);
+        setupToolbar(view, "Orden de compra", "", false);
+        messageLinearLayout = view.findViewById(R.id.message_linear_layout);
+        orderNestedScrollView = view.findViewById(R.id.order_nested_scroll_view);
         orderRecyclerView = view.findViewById(R.id.order_recycler_view);
         priceTotalTextView = view.findViewById(R.id.price_total_text_view);
         confirmMaterialButton = view.findViewById(R.id.confirm_material_button);
@@ -102,16 +100,11 @@ public class OrderFragment extends Fragment {
                                 public void run() {
                                     Object arg = args[0];
                                     Gson gson = new Gson();
-                                    //Log.v("confirmarpedido: ", "despues: " + Thread.currentThread().getName());
                                     OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
                                     if (orderModel.isSuccess()) {
-                                        Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
-                                        OrderSingleton.getInstance(getContext()).removeOrder();
-                                        setOrderRecyclerView();
-                                        priceTotalTextView.setText("Precio Total S/. 0.0 ");
-                                        OrderSingleton.getInstance(getContext()).setPriceTotal(0.0);
+                                        showSuccess();
                                     } else {
-                                        Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                                        showError();
                                     }
                                 }
                             });
@@ -120,9 +113,58 @@ public class OrderFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Agregar plato a la órden", Toast.LENGTH_LONG).show();
                 }
-                //Utilities.createNotification(getContext());
             }
         });
+        deleteMaterialButton = view.findViewById(R.id.delete_material_button);
+        deleteMaterialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                repaint();
+                showMessage(OrderState.EMPTY);
+            }
+        });
+        successLottieAnimationView = view.findViewById(R.id.success_lottie_animation_view);
+        deliciasImageView = view.findViewById(R.id.delicias_image_view);
+        messageTextView = view.findViewById(R.id.message_text_view);
+        messageTextView.setTypeface(Utilities.sansLight(getContext()));
+    }
+
+    private void showSuccess() {
+        showMessage(OrderState.ORDER_SUCCESS);
+        messageTextView.setText("¡Confirmación Éxitosa!");
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> {
+                    hideSuccess();
+                    repaint();
+                });
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 1500);
+        priceTotalTextView.setText("Precio Total S/. 0.0 ");
+    }
+
+    private void hideSuccess() {
+        messageLinearLayout.setVisibility(View.VISIBLE);
+        deliciasImageView.setVisibility(View.VISIBLE);
+        messageTextView.setText("¡Por favor agregar platos!");
+        successLottieAnimationView.setVisibility(View.GONE);
+    }
+
+    private void showError() {
+
+    }
+
+    private void hideError() {
+
+    }
+
+    private void repaint() {
+        OrderSingleton.getInstance(getContext()).removeOrder();
+        OrderSingleton.getInstance(getContext()).setPriceTotal(0.0);
+        setOrderRecyclerView();
     }
 
     private void setupToolbar(View view, String title, String subTitle, boolean arrow) {
@@ -147,11 +189,36 @@ public class OrderFragment extends Fragment {
 
     private void setOrderRecyclerView() {
         Order order = OrderSingleton.getInstance(getContext()).getOrder();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        orderRecyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new OrderAdapterRecycler(order.getPlates(), order.getNameFull(), R.layout.order_card_view, getActivity());
-        orderRecyclerView.setAdapter(adapter);
-        orderRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        if (order.getPlates().size() > 0) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            orderRecyclerView.setLayoutManager(linearLayoutManager);
+            adapter = new OrderAdapterRecycler(order.getPlates(), order.getNameFull(), R.layout.order_card_view, getActivity());
+            orderRecyclerView.setAdapter(adapter);
+            orderRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+            adapter.notifyDataSetChanged();
+        } else {
+            showMessage(OrderState.EMPTY);
+        }
+    }
+
+    private void showMessage(String state) {
+        if (state.equalsIgnoreCase(OrderState.EMPTY)) {
+            orderNestedScrollView.setVisibility(View.GONE);
+            successLottieAnimationView.setVisibility(View.GONE);
+            messageLinearLayout.setVisibility(View.VISIBLE);
+            confirmMaterialButton.setVisibility(View.GONE);
+            deleteMaterialButton.setVisibility(View.GONE);
+        } else if (state.equalsIgnoreCase(OrderState.ORDER_SUCCESS)) {
+            orderNestedScrollView.setVisibility(View.GONE);
+            messageLinearLayout.setVisibility(View.VISIBLE);
+            successLottieAnimationView.setVisibility(View.VISIBLE);
+            deliciasImageView.setVisibility(View.GONE);
+            messageTextView.setVisibility(View.VISIBLE);
+            confirmMaterialButton.setVisibility(View.GONE);
+            deleteMaterialButton.setVisibility(View.GONE);
+        } else {
+
+        }
     }
 
     private void setPriceTotal() {

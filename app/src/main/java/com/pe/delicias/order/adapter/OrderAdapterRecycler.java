@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.pe.delicias.order.model.Order;
 import com.pe.delicias.plate.model.Plate;
+import com.pe.delicias.utilities.Utilities;
 
 import java.util.List;
 
@@ -40,7 +41,8 @@ public class OrderAdapterRecycler extends RecyclerView.Adapter<OrderViewHolder> 
         //holder.idClient.setText(order.getIdClient());
         holder.nameClient.setText(nameClient);
         holder.namePlate.setText("(" + plate.getAmount() + ") " + plate.getName());
-        holder.pricePlate.setText("S/. " + plate.getPrice()+" (p.u S/. "+(plate.getPrice()/plate.getAmount())+")");
+        holder.namePlate.setTypeface(Utilities.sansBold(activity.getBaseContext()));
+        holder.pricePlate.setText("S/. " + plate.getPrice()+" (p.u S/. "+plate.getUnitPrice()+")");
     }
 
     @Override

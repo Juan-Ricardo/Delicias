@@ -32,6 +32,7 @@ import com.pe.delicias.category.model.Category;
 import com.pe.delicias.plate.adapter.PlateRecyclerAdapter;
 import com.pe.delicias.plate.model.Plate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -93,6 +94,7 @@ public class PlateFragment extends Fragment {
 
     private void events() {
         materialSearchView.setHint("Buscar...");
+        materialSearchView.setHintTextColor(R.color.color_text_title);
         materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -152,6 +154,7 @@ public class PlateFragment extends Fragment {
                 if (response.isSuccessful()) {
 
                     List<PlateDataResponse> rows = response.body().getData();
+                    Collections.shuffle(rows);
                     for (PlateDataResponse row : rows) {
 
                         Plate plate = new Plate();
@@ -161,7 +164,7 @@ public class PlateFragment extends Fragment {
                                 row.getCategoria_id().getDescripcion());
                         plate.setImage(row.getImagen());
                         plate.setPrice(Double.parseDouble(row.getPrecio()));
-
+                        plate.setUnitPrice(Double.parseDouble(row.getPrecio()));
                         plates.add(plate);
                     }
                     adapter.notifyDataSetChanged();
@@ -195,6 +198,7 @@ public class PlateFragment extends Fragment {
     public void setPlates(PlateResponse response) {
         plates = new LinkedList<>();
         List<PlateDataResponse> rows = response.getData();
+        Collections.shuffle(rows);
         for (PlateDataResponse row : rows) {
 
             Plate plate = new Plate();
@@ -204,6 +208,7 @@ public class PlateFragment extends Fragment {
                     row.getCategoria_id().getDescripcion());
             plate.setImage(row.getImagen());
             plate.setPrice(Double.parseDouble(row.getPrecio()));
+            plate.setUnitPrice(Double.parseDouble(row.getPrecio()));
 
             plates.add(plate);
         }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#efefef"
+    android:layout_marginBottom="64dp"
     tools:context=".plate.PlateFragment">
 
     <include layout="@layout/app_bar_layout"></include>

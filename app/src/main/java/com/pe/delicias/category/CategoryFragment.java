@@ -28,6 +28,7 @@ import com.pe.delicias.category.adapter.CategoryRecyclerAdapter;
 import com.pe.delicias.category.model.Category;
 import com.pe.delicias.home.PlateByCategoryListener;
 import com.pe.delicias.plate.PlateFragment;
+import com.pe.delicias.utilities.PreferencesSingleton;
 import com.pe.delicias.utilities.Utilities;
 
 import java.util.LinkedList;
@@ -37,7 +38,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CategoryFragment extends Fragment implements PlateByCategoryListener{
+public class CategoryFragment extends Fragment implements PlateByCategoryListener {
 
     private Toolbar toolbar;
     private RecyclerView menuRecyclerView;
@@ -106,7 +107,7 @@ public class CategoryFragment extends Fragment implements PlateByCategoryListene
         loadCategories();
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         menuRecyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new CategoryRecyclerAdapter(categories, R.layout.category_card_view, getActivity(),this);
+        adapter = new CategoryRecyclerAdapter(categories, R.layout.category_card_view, getActivity(), this);
         menuRecyclerView.setAdapter(adapter);
         menuRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
     }
@@ -161,13 +162,13 @@ public class CategoryFragment extends Fragment implements PlateByCategoryListene
 
     @Override
     public void onSuccess(PlateResponse plateResponse) {
-        if(plateResponse.getData().size()==0){
-            Toast.makeText(getContext(),"No contamos con estos platos :)",Toast.LENGTH_SHORT).show();
-        }else{
-            PlateFragment plateFragment =new PlateFragment();
+        if (plateResponse.getData().size() == 0) {
+            Toast.makeText(getContext(), "No contamos con estos platos :)", Toast.LENGTH_SHORT).show();
+        } else {
+            PlateFragment plateFragment = new PlateFragment();
             plateFragment.setPlates(plateResponse);
             plateFragment.setShowPlateByCategory(true);
-            addFragment(plateFragment,"PlateFragment");
+            addFragment(plateFragment, "PlateFragment");
         }
     }
 }
