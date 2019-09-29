@@ -14,4 +14,9 @@
         android:orderInCategory="101"
         android:title="Configuración"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/sign_out_item_menu"
+        android:orderInCategory="102"
+        android:title="Cerrar Sesión"
+        app:showAsAction="never" />
 </menu>

@@ -2,6 +2,7 @@ package com.pe.delicias.plate;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -20,6 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.pe.delicias.R;
 import com.pe.delicias.apirest.ApiClient;
@@ -29,6 +31,7 @@ import com.pe.delicias.apirest.response.plate.PlateDataResponse;
 import com.pe.delicias.apirest.response.plate.PlateResponse;
 import com.pe.delicias.category.adapter.CategoryRecyclerAdapter;
 import com.pe.delicias.category.model.Category;
+import com.pe.delicias.login.LoginImagenActivity;
 import com.pe.delicias.plate.adapter.PlateRecyclerAdapter;
 import com.pe.delicias.plate.model.Plate;
 
@@ -70,6 +73,8 @@ public class PlateFragment extends Fragment {
     private boolean isNavigationHide = false;
 
     private boolean showPlateByCategory = false;
+
+    private FirebaseAuth mAuth;
 
     public PlateFragment() {
         // Required empty public constructor
@@ -115,6 +120,12 @@ public class PlateFragment extends Fragment {
         ((AppCompatActivity) getActivity()).getSupportActionBar().setTitle(title);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setSubtitle(subTitle);
         ((AppCompatActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(arrow);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        this.mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
@@ -192,7 +203,16 @@ public class PlateFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.sign_out_item_menu) {
+            signOut();
+            getActivity().startActivity(new Intent(getContext(), LoginImagenActivity.class));
+            getActivity().finish();
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void signOut() {
+        FirebaseAuth.getInstance().signOut();
     }
 
     public void setPlates(PlateResponse response) {

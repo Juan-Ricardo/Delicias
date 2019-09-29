@@ -5,14 +5,16 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:allowBackup="true"
         android:name=".DeliciasApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_imagotipo"
         android:label="@string/app_name"
         android:roundIcon="@drawable/ic_imagotipo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".login.LoginImagenActivity"></activity>
+        <activity
+            android:name=".login.LoginImagenActivity"
+            android:noHistory="true"></activity>
         <activity
             android:name=".BasicActivity"
             android:label="@string/title_activity_basic"

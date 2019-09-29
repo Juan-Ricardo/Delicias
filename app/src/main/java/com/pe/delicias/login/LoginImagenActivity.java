@@ -1,21 +1,16 @@
 package com.pe.delicias.login;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.os.Bundle;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -48,10 +43,6 @@ import com.pe.delicias.home.HomeActivity;
 import com.pe.delicias.utilities.PreferencesSingleton;
 import com.pe.delicias.utilities.Utilities;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,7 +50,7 @@ import retrofit2.Response;
 public class LoginImagenActivity extends AppCompatActivity {
 
     private static final int SIGN_IN_GOOGLE = 100;
-    private static final String TAG = "Login";
+    private static final String TAG = "logingoofac";
     private TextView versionAppTextView;
     private TextView titleLogInTextView;
     private MaterialButton logInMaterialButton;
@@ -117,10 +108,10 @@ public class LoginImagenActivity extends AppCompatActivity {
             }
         });
 
-        this.callbackManager = CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create();
         signInFacebookButton = findViewById(R.id.sign_in_facebook);
         signInFacebookButton.setReadPermissions("email", "public_profile");
-        signInFacebookButton.registerCallback(this.callbackManager, new FacebookCallback<LoginResult>() {
+        signInFacebookButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
                 handleFacebookAccessToken(loginResult.getAccessToken());
@@ -128,12 +119,12 @@ public class LoginImagenActivity extends AppCompatActivity {
 
             @Override
             public void onCancel() {
-
+                Log.v(TAG, "onCancel");
             }
 
             @Override
             public void onError(FacebookException error) {
-
+                Log.v(TAG, "onError: " + error.getMessage());
             }
         });
     }
@@ -274,7 +265,7 @@ public class LoginImagenActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Error al iniciar sesión con google", Toast.LENGTH_LONG).show();
             }
         } else {
             this.callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -306,22 +297,19 @@ public class LoginImagenActivity extends AppCompatActivity {
 
     private void handleFacebookAccessToken(AccessToken accessToken) {
         Log.d(TAG, "handleFacebookAccessToken:" + accessToken.getToken());
-
         AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        Log.d(TAG, "handleFacebookAccessToken isSuccessful:" + task.isSuccessful());
-                        Log.d(TAG, "handleFacebookAccessToken isComplete:" + task.isComplete());
-                        if (task.isSuccessful()) {
-                            goHome();
-                        } else {
-                            Toast.makeText(getBaseContext(), "Error con facebook", Toast.LENGTH_LONG)
-                                    .show();
-                        }
-                    }
-                });
+        mAuth.signInWithCredential(credential).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+            @Override
+            public void onComplete(@NonNull Task<AuthResult> task) {
+                if (task.isSuccessful()) {
+                    goHome();
+                } else {
+                    Toast.makeText(getBaseContext(), "Error con facebook " +
+                            task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Log.v(TAG, "error facebook: " + task.getException().getMessage());
+                }
+            }
+        });
     }
 
     @Override
@@ -333,6 +321,5 @@ public class LoginImagenActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
     }
 }
