@@ -118,8 +118,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="12dp"
-                android:gravity="center"
-                android:orientation="vertical">
+                android:gravity="center">
 
                 <TextView
                     android:id="@+id/dont_have_account"
