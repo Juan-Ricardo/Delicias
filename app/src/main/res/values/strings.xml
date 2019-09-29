@@ -5,4 +5,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_basic">BasicActivity</string>
+
+    <string name="facebook_app_id">1178968042298934</string> <string name="fb_login_protocol_scheme">fb1178968042298934</string>
+
 </resources>

@@ -5,13 +5,24 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
 import android.os.Bundle;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -24,6 +35,7 @@ import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.pe.delicias.R;
@@ -35,6 +47,9 @@ import com.pe.delicias.apirest.response.customer.CustomerResponse;
 import com.pe.delicias.home.HomeActivity;
 import com.pe.delicias.utilities.PreferencesSingleton;
 import com.pe.delicias.utilities.Utilities;
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 
 import okhttp3.internal.Util;
 import retrofit2.Call;
@@ -56,6 +71,8 @@ public class LoginImagenActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private SignInButton signInGoogleButton;
     private FirebaseAuth mAuth;
+    private LoginButton signInFacebookButton;
+    private CallbackManager callbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,6 +114,26 @@ public class LoginImagenActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 signInGoogle();
+            }
+        });
+
+        this.callbackManager = CallbackManager.Factory.create();
+        signInFacebookButton = findViewById(R.id.sign_in_facebook);
+        signInFacebookButton.setReadPermissions("email", "public_profile");
+        signInFacebookButton.registerCallback(this.callbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+
             }
         });
     }
@@ -239,7 +276,11 @@ public class LoginImagenActivity extends AppCompatActivity {
             } catch (ApiException e) {
                 Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
             }
+        } else {
+            this.callbackManager.onActivityResult(requestCode, resultCode, data);
         }
+
+
     }
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
@@ -254,17 +295,39 @@ public class LoginImagenActivity extends AppCompatActivity {
                             goHome();
                             //Toast.makeText(getBaseContext(), "Correctamente", Toast.LENGTH_LONG).show();
                         } else {
-                            Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getBaseContext(), "Error con google", Toast.LENGTH_LONG)
+                                    .show();
                         }
                     }
                 });
 
     }
 
+
+    private void handleFacebookAccessToken(AccessToken accessToken) {
+        Log.d(TAG, "handleFacebookAccessToken:" + accessToken.getToken());
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(accessToken.getToken());
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        Log.d(TAG, "handleFacebookAccessToken isSuccessful:" + task.isSuccessful());
+                        Log.d(TAG, "handleFacebookAccessToken isComplete:" + task.isComplete());
+                        if (task.isSuccessful()) {
+                            goHome();
+                        } else {
+                            Toast.makeText(getBaseContext(), "Error con facebook", Toast.LENGTH_LONG)
+                                    .show();
+                        }
+                    }
+                });
+    }
+
     @Override
     protected void onStart() {
         super.onStart();
-        mAuth = FirebaseAuth.getInstance();
+        this.mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
