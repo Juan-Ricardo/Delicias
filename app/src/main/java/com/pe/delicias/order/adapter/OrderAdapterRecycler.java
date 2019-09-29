@@ -9,19 +9,23 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pe.delicias.order.model.Order;
+import com.pe.delicias.plate.model.Plate;
+import com.pe.delicias.utilities.Utilities;
 
 import java.util.List;
 
 public class OrderAdapterRecycler extends RecyclerView.Adapter<OrderViewHolder> {
 
-    private List<Order> orders;
+    private List<Plate> plates;
+    private String nameClient;
     private Activity activity;
     private int resource;
 
-    public OrderAdapterRecycler(List<Order> orders, int resource, Activity activity) {
-        this.orders=orders;
-        this.activity=activity;
-        this.resource=resource;
+    public OrderAdapterRecycler(List<Plate> plates, String nameClient, int resource, Activity activity) {
+        this.plates = plates;
+        this.nameClient = nameClient;
+        this.activity = activity;
+        this.resource = resource;
     }
 
     @NonNull
@@ -33,16 +37,16 @@ public class OrderAdapterRecycler extends RecyclerView.Adapter<OrderViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull OrderViewHolder holder, int position) {
-        Order order = this.orders.get(position);
-
-        holder.idClient.setText(order.getIdClient());
-        holder.nameClient.setText(order.getNameFull());
-        holder.namePlate.setText(order.getPlate().getName());
-        holder.pricePlate.setText("S/. "+order.getPlate().getPrice());
+        Plate plate = this.plates.get(position);
+        //holder.idClient.setText(order.getIdClient());
+        holder.nameClient.setText(nameClient);
+        holder.namePlate.setText("(" + plate.getAmount() + ") " + plate.getName());
+        holder.namePlate.setTypeface(Utilities.sansBold(activity.getBaseContext()));
+        holder.pricePlate.setText("S/. " + plate.getPrice()+" (p.u S/. "+plate.getUnitPrice()+")");
     }
 
     @Override
     public int getItemCount() {
-        return this.orders.size();
+        return this.plates.size();
     }
 }

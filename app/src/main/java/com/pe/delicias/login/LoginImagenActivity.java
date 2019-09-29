@@ -1,5 +1,6 @@
 package com.pe.delicias.login;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ProgressDialog;
@@ -10,6 +11,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.pe.delicias.R;
@@ -29,6 +37,8 @@ import retrofit2.Response;
 
 public class LoginImagenActivity extends AppCompatActivity {
 
+    private static final int SIGN_IN_GOOGLE = 100;
+    private static final String TAG = "Login";
     private TextView versionAppTextView;
     private TextView titleLogInTextView;
     private MaterialButton logInMaterialButton;
@@ -38,6 +48,7 @@ public class LoginImagenActivity extends AppCompatActivity {
     private TextView dontHaveAccountTextView;
     private TextView signUpTextView;
     private ProgressDialog progressDialog;
+    private SignInButton signInGoogleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +83,15 @@ public class LoginImagenActivity extends AppCompatActivity {
         signUpTextView.setTypeface(Utilities.sansBold(this));
 
         progressDialog = new ProgressDialog(this);
+
+        signInGoogleButton=findViewById(R.id.sign_in_google);
+        signInGoogleButton.setSize(SignInButton.SIZE_STANDARD);
+        signInGoogleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signInGoogle();
+            }
+        });
     }
 
     private void events() {
@@ -186,6 +206,37 @@ public class LoginImagenActivity extends AppCompatActivity {
     private void goHome() {
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
+    }
+
+    private void signInGoogle() {
+
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+        Intent signInIntent = googleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent,SIGN_IN_GOOGLE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SIGN_IN_GOOGLE) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            try {
+                // Google Sign In was successful, authenticate with Firebase
+                GoogleSignInAccount account = task.getResult(ApiException.class);
+                firebaseAuthWithGoogle(account);
+            } catch (ApiException e) {
+                Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account){
+        Toast.makeText(getBaseContext(),"Correctamente",Toast.LENGTH_LONG).show();
     }
 
     @Override

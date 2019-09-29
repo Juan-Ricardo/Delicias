@@ -10,7 +10,6 @@ public class Order {
     private String nameFull;
     private String dateRegister;
     private List<Plate> plates;
-    private Plate plate;
     private double total;
 
     public Order() {
@@ -55,14 +54,6 @@ public class Order {
 
     public void setPlates(List<Plate> plates) {
         this.plates = plates;
-    }
-
-    public Plate getPlate() {
-        return plate;
-    }
-
-    public void setPlate(Plate plate) {
-        this.plate = plate;
     }
 
     public double getTotal() {

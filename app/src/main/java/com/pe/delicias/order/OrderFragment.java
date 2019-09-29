@@ -1,36 +1,29 @@
 package com.pe.delicias.order;
 
 
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.material.button.MaterialButton;
 import com.google.gson.Gson;
 import com.pe.delicias.R;
-import com.pe.delicias.home.HomeActivity;
+import com.pe.delicias.category.model.OrderState;
 import com.pe.delicias.order.adapter.OrderAdapterRecycler;
 import com.pe.delicias.order.model.Order;
 import com.pe.delicias.order.model.OrderModel;
@@ -41,7 +34,8 @@ import com.pe.delicias.utilities.Utilities;
 
 import org.json.JSONObject;
 
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import io.socket.client.Ack;
 
@@ -50,12 +44,17 @@ import io.socket.client.Ack;
  */
 public class OrderFragment extends Fragment {
 
-
+    private LinearLayout messageLinearLayout;
+    private NestedScrollView orderNestedScrollView;
     private Toolbar toolbar;
     private TextView priceTotalTextView;
     private RecyclerView orderRecyclerView;
     private OrderAdapterRecycler adapter;
     private MaterialButton confirmMaterialButton;
+    private MaterialButton deleteMaterialButton;
+    private LottieAnimationView successLottieAnimationView;
+    private ImageView deliciasImageView;
+    private TextView messageTextView;
 
     public OrderFragment() {
         // Required empty public constructor
@@ -75,7 +74,9 @@ public class OrderFragment extends Fragment {
     }
 
     private void finds(View view) {
-        setupToolbar(view, "Órdenes", "", false);
+        setupToolbar(view, "Orden de compra", "", false);
+        messageLinearLayout = view.findViewById(R.id.message_linear_layout);
+        orderNestedScrollView = view.findViewById(R.id.order_nested_scroll_view);
         orderRecyclerView = view.findViewById(R.id.order_recycler_view);
         priceTotalTextView = view.findViewById(R.id.price_total_text_view);
         confirmMaterialButton = view.findViewById(R.id.confirm_material_button);
@@ -83,12 +84,12 @@ public class OrderFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //Toast.makeText(getContext(), "Confirmar Pedido", Toast.LENGTH_LONG).show();
-                List<Order> orders = OrderSingleton.getInstance(getContext()).getOrders();
-                if (orders.size() != 0) {
+                Order order = OrderSingleton.getInstance(getContext()).getOrder();
+                if (order.getPlates().size() != 0) {
                     String idClient = PreferencesSingleton.getInstance(getContext())
                             .read(Utilities.ID_CUSTOMER, "default");
 
-                    JSONObject jsonObject = SocketUtils.getJsonObject(idClient, orders);
+                    JSONObject jsonObject = SocketUtils.getJsonObject(idClient, order);
                     Log.v("confirmarpedido: ", "" + jsonObject);
                     //Log.v("confirmarpedido: ", "antes: " + Thread.currentThread().getName());
                     SocketManager.getInstance(getActivity()).emit(SocketUtils.EMIT_ORDER, jsonObject, new Ack() {
@@ -99,15 +100,11 @@ public class OrderFragment extends Fragment {
                                 public void run() {
                                     Object arg = args[0];
                                     Gson gson = new Gson();
-                                    //Log.v("confirmarpedido: ", "despues: " + Thread.currentThread().getName());
                                     OrderModel orderModel = gson.fromJson(arg.toString(), OrderModel.class);
                                     if (orderModel.isSuccess()) {
-                                        Toast.makeText(getContext(), "Exitosamente!", Toast.LENGTH_LONG).show();
-                                        OrderSingleton.getInstance(getContext()).removeAllOrders();
-                                        setOrderRecyclerView();
-                                        priceTotalTextView.setText("Precio Total S/. 0.0 ");
+                                        showSuccess();
                                     } else {
-                                        Toast.makeText(getContext(), "Error", Toast.LENGTH_LONG).show();
+                                        showError();
                                     }
                                 }
                             });
@@ -116,49 +113,58 @@ public class OrderFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Agregar plato a la órden", Toast.LENGTH_LONG).show();
                 }
-                showNotification();
             }
         });
+        deleteMaterialButton = view.findViewById(R.id.delete_material_button);
+        deleteMaterialButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                repaint();
+                showMessage(OrderState.EMPTY);
+            }
+        });
+        successLottieAnimationView = view.findViewById(R.id.success_lottie_animation_view);
+        deliciasImageView = view.findViewById(R.id.delicias_image_view);
+        messageTextView = view.findViewById(R.id.message_text_view);
+        messageTextView.setTypeface(Utilities.sansLight(getContext()));
     }
 
-    private void abc(){
-        // This is the Notification Channel ID. More about this in the next section
-        String NOTIFICATION_CHANNEL_ID = "channel_id";
-        int NOTIFICATION_ID = 1001;
-        //Notification Channel ID passed as a parameter here will be ignored for all the Android versions below 8.0
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext(), NOTIFICATION_CHANNEL_ID);
-        builder.setContentTitle("This is heading");
-        builder.setContentText("This is description");
-        builder.setSmallIcon(R.drawable.chef_notification);
-        builder.setPriority(NotificationCompat.PRIORITY_DEFAULT);
-        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
-        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
-        builder.setCategory(NotificationCompat.CATEGORY_MESSAGE);
-        //builder.setSmallIcon(R.drawable.icon);
-        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.icon));
-        Notification notification = builder.build();
+    private void showSuccess() {
+        showMessage(OrderState.ORDER_SUCCESS);
+        messageTextView.setText("¡Confirmación Éxitosa!");
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                getActivity().runOnUiThread(() -> {
+                    hideSuccess();
+                    repaint();
+                });
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, 1500);
+        priceTotalTextView.setText("Precio Total S/. 0.0 ");
+    }
 
-        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getContext());
-        notificationManagerCompat.notify(NOTIFICATION_ID, notification);
+    private void hideSuccess() {
+        messageLinearLayout.setVisibility(View.VISIBLE);
+        deliciasImageView.setVisibility(View.VISIBLE);
+        messageTextView.setText("¡Por favor agregar platos!");
+        successLottieAnimationView.setVisibility(View.GONE);
+    }
 
+    private void showError() {
 
     }
-    private void showNotification() {
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getContext());
-        builder.setSmallIcon(android.R.drawable.ic_dialog_alert);
-        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.journaldev.com/"));
-        PendingIntent pendingIntent = PendingIntent.getActivity(getContext(), 0, intent, 0);
-        builder.setContentIntent(pendingIntent);
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher));
-        builder.setContentTitle("Notifications Title");
-        builder.setContentText("Your notification content here.");
-        builder.setSubText("Tap to view the website.");
 
-        NotificationManager notificationManager = (NotificationManager) getActivity()
-                .getSystemService(Context.NOTIFICATION_SERVICE);
+    private void hideError() {
 
-        // Will display the notification in the notification bar
-        notificationManager.notify(1, builder.build());
+    }
+
+    private void repaint() {
+        OrderSingleton.getInstance(getContext()).removeOrder();
+        OrderSingleton.getInstance(getContext()).setPriceTotal(0.0);
+        setOrderRecyclerView();
     }
 
     private void setupToolbar(View view, String title, String subTitle, boolean arrow) {
@@ -182,12 +188,37 @@ public class OrderFragment extends Fragment {
     }
 
     private void setOrderRecyclerView() {
-        List<Order> orders = OrderSingleton.getInstance(getContext()).getOrders();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
-        orderRecyclerView.setLayoutManager(linearLayoutManager);
-        adapter = new OrderAdapterRecycler(orders, R.layout.order_card_view, getActivity());
-        orderRecyclerView.setAdapter(adapter);
-        orderRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+        Order order = OrderSingleton.getInstance(getContext()).getOrder();
+        if (order.getPlates().size() > 0) {
+            LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+            orderRecyclerView.setLayoutManager(linearLayoutManager);
+            adapter = new OrderAdapterRecycler(order.getPlates(), order.getNameFull(), R.layout.order_card_view, getActivity());
+            orderRecyclerView.setAdapter(adapter);
+            orderRecyclerView.addItemDecoration(new DividerItemDecoration(getContext(), LinearLayoutManager.VERTICAL));
+            adapter.notifyDataSetChanged();
+        } else {
+            showMessage(OrderState.EMPTY);
+        }
+    }
+
+    private void showMessage(String state) {
+        if (state.equalsIgnoreCase(OrderState.EMPTY)) {
+            orderNestedScrollView.setVisibility(View.GONE);
+            successLottieAnimationView.setVisibility(View.GONE);
+            messageLinearLayout.setVisibility(View.VISIBLE);
+            confirmMaterialButton.setVisibility(View.GONE);
+            deleteMaterialButton.setVisibility(View.GONE);
+        } else if (state.equalsIgnoreCase(OrderState.ORDER_SUCCESS)) {
+            orderNestedScrollView.setVisibility(View.GONE);
+            messageLinearLayout.setVisibility(View.VISIBLE);
+            successLottieAnimationView.setVisibility(View.VISIBLE);
+            deliciasImageView.setVisibility(View.GONE);
+            messageTextView.setVisibility(View.VISIBLE);
+            confirmMaterialButton.setVisibility(View.GONE);
+            deleteMaterialButton.setVisibility(View.GONE);
+        } else {
+
+        }
     }
 
     private void setPriceTotal() {
