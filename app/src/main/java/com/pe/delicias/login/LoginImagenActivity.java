@@ -244,6 +244,7 @@ public class LoginImagenActivity extends AppCompatActivity {
 
     private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
         //95:BD:4B:61:B3:8E:87:07:A1:BE:4D:9C:9C:10:4B:A3:84:FA:E4:14 - Ricardo
+        //B9:51:46:2F:3E:35:58:61:19:98:38:70:54:A9:D3:E9:D7:CA:93:EA - Teresa
         Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
         AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
         mAuth.signInWithCredential(credential)
