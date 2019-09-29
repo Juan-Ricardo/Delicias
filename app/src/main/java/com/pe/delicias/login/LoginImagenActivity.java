@@ -1,5 +1,6 @@
 package com.pe.delicias.login;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,9 +18,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.pe.delicias.R;
 import com.pe.delicias.account.CreateAccountActivity;
 import com.pe.delicias.apirest.ApiClient;
@@ -49,6 +55,7 @@ public class LoginImagenActivity extends AppCompatActivity {
     private TextView signUpTextView;
     private ProgressDialog progressDialog;
     private SignInButton signInGoogleButton;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,7 +91,7 @@ public class LoginImagenActivity extends AppCompatActivity {
 
         progressDialog = new ProgressDialog(this);
 
-        signInGoogleButton=findViewById(R.id.sign_in_google);
+        signInGoogleButton = findViewById(R.id.sign_in_google);
         signInGoogleButton.setSize(SignInButton.SIZE_STANDARD);
         signInGoogleButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -181,9 +188,9 @@ public class LoginImagenActivity extends AppCompatActivity {
         String token = response.body().getData().getToken();
         String names = response.body().getData().getNombres();
 
-        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.ID_CUSTOMER,id);
-        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.TOKEN_CUSTOMER,token);
-        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.NAMES_CUSTOMER,names);
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.ID_CUSTOMER, id);
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.TOKEN_CUSTOMER, token);
+        PreferencesSingleton.getInstance(getBaseContext()).save(Utilities.NAMES_CUSTOMER, names);
     }
 
     private void showLoading() {
@@ -217,7 +224,7 @@ public class LoginImagenActivity extends AppCompatActivity {
 
         GoogleSignInClient googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
         Intent signInIntent = googleSignInClient.getSignInIntent();
-        startActivityForResult(signInIntent,SIGN_IN_GOOGLE);
+        startActivityForResult(signInIntent, SIGN_IN_GOOGLE);
     }
 
     @Override
@@ -230,13 +237,33 @@ public class LoginImagenActivity extends AppCompatActivity {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
                 firebaseAuthWithGoogle(account);
             } catch (ApiException e) {
-                Toast.makeText(getBaseContext(),"Error",Toast.LENGTH_LONG).show();
+                Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
             }
         }
     }
 
-    private void firebaseAuthWithGoogle(GoogleSignInAccount account){
-        Toast.makeText(getBaseContext(),"Correctamente",Toast.LENGTH_LONG).show();
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        //95:BD:4B:61:B3:8E:87:07:A1:BE:4D:9C:9C:10:4B:A3:84:FA:E4:14 - Ricardo
+        Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        mAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getBaseContext(), "Correctamente", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mAuth = FirebaseAuth.getInstance();
     }
 
     @Override
