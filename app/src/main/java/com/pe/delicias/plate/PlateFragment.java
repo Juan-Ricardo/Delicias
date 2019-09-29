@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
@@ -20,6 +21,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.facebook.login.LoginManager;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
@@ -75,6 +85,7 @@ public class PlateFragment extends Fragment {
     private boolean showPlateByCategory = false;
 
     private FirebaseAuth mAuth;
+    private GoogleApiClient googleApiClient;
 
     public PlateFragment() {
         // Required empty public constructor
@@ -126,6 +137,20 @@ public class PlateFragment extends Fragment {
     public void onStart() {
         super.onStart();
         this.mAuth = FirebaseAuth.getInstance();
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
+
+        googleApiClient = new GoogleApiClient.Builder(getContext())
+                .enableAutoManage(getActivity(), new GoogleApiClient.OnConnectionFailedListener() {
+                    @Override
+                    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+                    }
+                })
+                .addApi(Auth.GOOGLE_SIGN_IN_API, googleSignInOptions)
+                .build();
     }
 
     @Override
@@ -205,14 +230,39 @@ public class PlateFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.sign_out_item_menu) {
             signOut();
-            getActivity().startActivity(new Intent(getContext(), LoginImagenActivity.class));
-            getActivity().finish();
+
         }
         return super.onOptionsItemSelected(item);
     }
 
     private void signOut() {
         FirebaseAuth.getInstance().signOut();
+
+        //Para cerrar sesión usando Google.
+        if (Auth.GoogleSignInApi != null) {
+            Auth.GoogleSignInApi.signOut(googleApiClient)
+                    .setResultCallback(new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(@NonNull Status status) {
+                            if(status.isSuccess()){
+                                goLogin();
+                            }else{
+
+                            }
+                        }
+                    });
+        }
+
+        //Para cerrar sesión usando Facebook.
+        if (LoginManager.getInstance() != null) {
+            LoginManager.getInstance().logOut();
+            goLogin();
+        }
+    }
+
+    private void goLogin(){
+        getActivity().startActivity(new Intent(getContext(), LoginImagenActivity.class));
+        getActivity().finish();
     }
 
     public void setPlates(PlateResponse response) {
