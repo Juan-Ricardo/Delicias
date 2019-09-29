@@ -251,7 +251,8 @@ public class LoginImagenActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getBaseContext(), "Correctamente", Toast.LENGTH_LONG).show();
+                            goHome();
+                            //Toast.makeText(getBaseContext(), "Correctamente", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getBaseContext(), "Error", Toast.LENGTH_LONG).show();
                         }
