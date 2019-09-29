@@ -1,4 +1,4 @@
-package com.pe.delicias.apirest.response;
+package com.pe.delicias.apirest.response.user;
 
 public class DataResponse {
     private String token;

@@ -5,7 +5,9 @@ public class Plate {
     private String image;
     private String name;
     private String description;
-    private String price;
+    private double price;
+    private double unitPrice;
+    private int amount;
 
     public Plate() {
 
@@ -43,11 +45,27 @@ public class Plate {
         this.description = description;
     }
 
-    public String getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(double price) {
         this.price = price;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public void setUnitPrice(double unitPrice) {
+        this.unitPrice = unitPrice;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    public void setAmount(int amount) {
+        this.amount = amount;
     }
 }

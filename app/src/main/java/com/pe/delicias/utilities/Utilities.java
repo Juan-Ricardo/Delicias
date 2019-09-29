@@ -1,8 +1,19 @@
 package com.pe.delicias.utilities;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
+import android.media.RingtoneManager;
+import android.os.Build;
 import android.util.Patterns;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
+import com.pe.delicias.R;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -14,6 +25,45 @@ public class Utilities {
     public static String ID_CUSTOMER="id_customer";
     public static String TOKEN_CUSTOMER="token_customer";
     public static String NAMES_CUSTOMER="names_customer";
+    private final static String CHANNEL_ID = "NOTIFICACION";
+    private final static int NOTIFICACION_ID = 0;
+
+    private static void createNotificationChannel(Context context) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            //CharSequence name = getString(R.string.channel_name);
+            CharSequence name = "Delicias Desayuno";
+            //String description = getString(R.string.channel_description);
+            String description = "Pan, Frutas, Ensalada, etc";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    public static void createNotification(Context context){
+        createNotificationChannel(context);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID);
+        builder.setSmallIcon(R.drawable.chef_notification);
+        builder.setContentTitle("Cheeff v1.0.0");
+        builder.setContentText("Nuevo orden de pedido");
+        builder.setColor(Color.BLUE);
+        builder.setPriority(Notification.PRIORITY_MAX);
+        builder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC);
+        builder.setLights(Color.MAGENTA, 1000, 1000);
+        builder.setVibrate(new long[]{1000,1000,1000,1000,1000});
+        //builder.setDefaults(Notification.DEFAULT_SOUND);
+        builder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM));
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat
+                .from(context);
+        notificationManagerCompat.notify(NOTIFICACION_ID, builder.build());
+    }
 
     public static boolean emailIsValid(String email) {
         Pattern pattern = Patterns.EMAIL_ADDRESS;

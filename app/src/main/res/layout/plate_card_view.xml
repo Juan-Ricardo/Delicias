@@ -4,17 +4,29 @@
     android:id="@+id/plate_card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="12dp"
-    android:layout_marginTop="12dp"
-    android:layout_marginRight="12dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginRight="4dp"
     app:cardElevation="4dp">
 
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/success_lottie_animation_view"
+        android:layout_width="74dp"
+        android:layout_height="74dp"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="lottie/success.json"
+        app:lottie_loop="true" />
+
     <RelativeLayout
+        android:id="@+id/content_relative_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="?android:attr/selectableItemBackground"
         android:clickable="true"
-        android:padding="12dp">
+        android:padding="12dp"
+        android:visibility="visible">
 
         <LinearLayout
             android:id="@+id/plate_linear_layout"
@@ -26,8 +38,8 @@
 
             <ImageView
                 android:id="@+id/plate_image_view"
-                android:layout_width="74dp"
-                android:layout_height="74dp"
+                android:layout_width="84dp"
+                android:layout_height="84dp"
                 android:layout_gravity="center"
                 android:src="@drawable/salads" />
 
@@ -74,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Arroz con Pollo"
-                    android:textColor="#090a14"
+                    android:textColor="#14172E"
                     android:textSize="24sp"
                     android:textStyle="bold" />
 
@@ -97,10 +109,37 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_centerInParent="true"
+                        android:background="@drawable/shape_sign_up"
+                        android:paddingLeft="12dp"
+                        android:paddingRight="12dp"
                         android:text="S/. 23.99"
-                        android:textColor="#f8cc05"
-                        android:textSize="24sp"
+                        android:textColor="#1A225C"
+                        android:textSize="20sp"
                         android:textStyle="bold" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/add_order_material_button"
+                        android:layout_width="52dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:text="+"
+                        app:cornerRadius="48dp"
+                        android:backgroundTint="#3bbc5e"
+                        android:textAllCaps="false"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/successb_lottie_animation_view"
+                        android:layout_width="52dp"
+                        android:layout_height="60dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="lottie/success.json"
+                        app:lottie_loop="true" />
 
                     <ImageView
                         android:id="@+id/add_order_image_view"
@@ -108,7 +147,8 @@
                         android:layout_height="40dp"
                         android:layout_alignParentRight="true"
                         android:layout_centerInParent="true"
-                        android:src="@drawable/ic_add_circle_black_24dp" />
+                        android:src="@drawable/ic_add_circle_black_24dp"
+                        android:visibility="gone" />
                 </RelativeLayout>
 
 

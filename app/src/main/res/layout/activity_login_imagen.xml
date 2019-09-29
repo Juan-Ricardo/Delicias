@@ -17,20 +17,23 @@
             android:id="@+id/plate_food1_image_view"
             android:layout_width="54dp"
             android:layout_height="54dp"
-            android:src="@drawable/salads" />
+            android:src="@drawable/salads"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/plate_food2_image_view"
             android:layout_width="54dp"
             android:layout_height="54dp"
             android:layout_marginLeft="8dp"
-            android:src="@drawable/meal" />
+            android:src="@drawable/meal"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/plate_food3_image_view"
             android:layout_width="74dp"
             android:layout_height="74dp"
-            android:src="@drawable/bison_quinoa" />
+            android:src="@drawable/bison_quinoa"
+            android:visibility="gone" />
     </LinearLayout>
 
     <ScrollView
@@ -66,8 +69,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:gravity="center"
-                android:textColor="@color/color_text_title"
                 android:text="Iniciar Sesión"
+                android:textColor="@color/color_text_title"
                 android:textSize="44sp"
                 android:textStyle="bold" />
 
@@ -108,14 +111,15 @@
                 android:layout_marginTop="12dp"
                 android:text="Iniciar Sesión"
                 android:textAllCaps="false"
-                app:cornerRadius="24dp" />
+                app:cornerRadius="48dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_marginTop="12dp"
-                android:gravity="center">
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <TextView
                     android:id="@+id/dont_have_account"
@@ -128,7 +132,8 @@
                     android:id="@+id/sign_up_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
+                    android:layout_below="@id/dont_have_account"
+                    android:layout_marginTop="4dp"
                     android:background="@drawable/shape_sign_up"
                     android:paddingLeft="16dp"
                     android:paddingTop="4dp"
@@ -137,8 +142,7 @@
                     android:text="sign up"
                     android:textColor="#303C42"
                     android:textSize="16sp"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton

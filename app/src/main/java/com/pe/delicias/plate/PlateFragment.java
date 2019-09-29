@@ -1,6 +1,7 @@
 package com.pe.delicias.plate;
 
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import com.pe.delicias.category.model.Category;
 import com.pe.delicias.plate.adapter.PlateRecyclerAdapter;
 import com.pe.delicias.plate.model.Plate;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -67,6 +69,8 @@ public class PlateFragment extends Fragment {
 
     private boolean isNavigationHide = false;
 
+    private boolean showPlateByCategory = false;
+
     public PlateFragment() {
         // Required empty public constructor
     }
@@ -85,12 +89,12 @@ public class PlateFragment extends Fragment {
         setHasOptionsMenu(true);
         menuBottomNavigationView = getActivity().findViewById(R.id.menu_bottom_navigation);
         setupToolbar("Platos", "", false);
-        plates = new LinkedList<>();
         events();
     }
 
     private void events() {
         materialSearchView.setHint("Buscar...");
+        materialSearchView.setHintTextColor(R.color.color_text_title);
         materialSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -116,10 +120,24 @@ public class PlateFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        setPlateRecyclerView();
+        setupShowPlate();
+    }
+
+    private void setupShowPlate() {
+        if (showPlateByCategory)
+            showPlateByCategoryRecyclerView();
+        else
+            setPlateRecyclerView();
+    }
+
+    private void showPlateByCategoryRecyclerView() {
+        plateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        adapter = new PlateRecyclerAdapter(plates, R.layout.plate_card_view, getActivity());
+        plateRecyclerView.setAdapter(adapter);
     }
 
     private void setPlateRecyclerView() {
+        plates = new LinkedList<>();
         plateRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new PlateRecyclerAdapter(plates, R.layout.plate_card_view, getActivity());
         plateRecyclerView.setAdapter(adapter);
@@ -136,6 +154,7 @@ public class PlateFragment extends Fragment {
                 if (response.isSuccessful()) {
 
                     List<PlateDataResponse> rows = response.body().getData();
+                    Collections.shuffle(rows);
                     for (PlateDataResponse row : rows) {
 
                         Plate plate = new Plate();
@@ -144,8 +163,8 @@ public class PlateFragment extends Fragment {
                         plate.setDescription(row.getCategoria_id().getNombre() + " " +
                                 row.getCategoria_id().getDescripcion());
                         plate.setImage(row.getImagen());
-                        plate.setPrice(row.getPrecio());
-
+                        plate.setPrice(Double.parseDouble(row.getPrecio()));
+                        plate.setUnitPrice(Double.parseDouble(row.getPrecio()));
                         plates.add(plate);
                     }
                     adapter.notifyDataSetChanged();
@@ -174,5 +193,28 @@ public class PlateFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return super.onOptionsItemSelected(item);
+    }
+
+    public void setPlates(PlateResponse response) {
+        plates = new LinkedList<>();
+        List<PlateDataResponse> rows = response.getData();
+        Collections.shuffle(rows);
+        for (PlateDataResponse row : rows) {
+
+            Plate plate = new Plate();
+            plate.setId(row.get_id());
+            plate.setName(row.getNombre());
+            plate.setDescription(row.getCategoria_id().getNombre() + " " +
+                    row.getCategoria_id().getDescripcion());
+            plate.setImage(row.getImagen());
+            plate.setPrice(Double.parseDouble(row.getPrecio()));
+            plate.setUnitPrice(Double.parseDouble(row.getPrecio()));
+
+            plates.add(plate);
+        }
+    }
+
+    public void setShowPlateByCategory(boolean showPlateByCategory) {
+        this.showPlateByCategory = showPlateByCategory;
     }
 }
